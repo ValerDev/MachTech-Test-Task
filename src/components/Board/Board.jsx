@@ -1,29 +1,43 @@
+// Board.js
 import React from 'react';
 import s from './Board.module.scss';
 
 function Board({ cuts }) {
-
     const generateCutPieces = () => {
         let allCutPieces = [];
         let currentLeft = 0;
         let currentTop = 0;
         let boards = [];
 
-        cuts.forEach((cut, cutIndex) => {
-            for (let i = 0; i < cut.quantity; i++) {
+        const sortedCuts = cuts.slice().sort((a, b) => b.height - a.height);
 
-                if (currentLeft + cut.width > 1830 || currentTop + cut.height > 3630) {
+        sortedCuts.forEach((cut, cutIndex) => {
+            for (let i = 0; i < cut.quantity; i++) {
+                if (currentLeft + cut.width > 1830) {
+                    currentLeft = 0;
+                    currentTop += cut.height;
+                }
+
+                if (currentTop + cut.height > 3630) {
 
                     boards.push(
                         <div key={`board_${boards.length}`} className={s.boardVisualization}>
                             {allCutPieces}
                         </div>
                     );
-
                     currentLeft = 0;
                     currentTop = 0;
                     allCutPieces = [];
                 }
+
+                while (currentTop < 3630 && !isPositionValid(allCutPieces, currentLeft, currentTop, cut.width, cut.height)) {
+                    currentLeft += 1;
+                    if (currentLeft + cut.width > 1830) {
+                        currentLeft = 0;
+                        currentTop += 1;
+                    }
+                }
+
                 const isSmall = cut.width < 50 && cut.height < 50;
                 const style = {
                     left: `${currentLeft}px`,
@@ -39,11 +53,7 @@ function Board({ cuts }) {
                     </div>
                 );
 
-                currentLeft += +cut.width;
-                if (currentLeft + cut.width > 1830) {
-                    currentLeft = 0;
-                    currentTop += +cut.height;
-                }
+                currentLeft += cut.width;
             }
         });
 
@@ -54,6 +64,22 @@ function Board({ cuts }) {
         );
 
         return boards;
+    };
+
+    const isPositionValid = (pieces, left, top, width, height) => {
+        return !pieces.some(piece => {
+            const pieceLeft = parseInt(piece.props.style.left, 10);
+            const pieceTop = parseInt(piece.props.style.top, 10);
+            const pieceWidth = parseInt(piece.props.style.width, 10);
+            const pieceHeight = parseInt(piece.props.style.height, 10);
+
+            return (
+                left < pieceLeft + pieceWidth &&
+                left + width > pieceLeft &&
+                top < pieceTop + pieceHeight &&
+                top + height > pieceTop
+            );
+        });
     };
 
     return (
