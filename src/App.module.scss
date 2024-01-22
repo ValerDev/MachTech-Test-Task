@@ -1,0 +1,15 @@
+@import './variables.scss';
+
+.app {
+  text-align: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    color: $baseColor;
+  }
+}
