@@ -84,8 +84,8 @@ function Board({ cuts }) {
 
     return (
         <div className={s.board}>
-            {cuts.length > 0 && generateCutPieces()}
             <span>{'1830 x 3630 (mm)'}</span>
+            {cuts.length > 0 && generateCutPieces()}
             {cuts.length === 0 && (
                 <div className={s.boardVisualization}>
                 </div>

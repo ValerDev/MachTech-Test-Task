@@ -6,7 +6,8 @@ import s from './App.module.scss';
 function App() {
   const [cuts, setCuts] = useState([]);
 
-  const addCut = (cut) => {
+  const addCut = (cut, isRotated) => {
+    if(isRotated) [cut.width, cut.height] = [cut.height, cut.width];
     setCuts([...cuts, cut]);
   };
 
